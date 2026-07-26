@@ -58,7 +58,7 @@ bun install
 ### 4. Generar el cliente de Prisma
 
 ```bash
-bunx prisma generate
+bun run db:generate
 ```
 
 ### 5. Aplicar las migraciones a la base de datos
@@ -66,13 +66,13 @@ bunx prisma generate
 Crea la migración inicial y aplícala:
 
 ```bash
-bunx prisma migrate dev --name init
+bun run db:migrate -- --name init
 ```
 
 Si quieres sincronizar sin crear una migración (solo en desarrollo):
 
 ```bash
-bunx prisma db push
+bun run db:push
 ```
 
 ### 6. (Opcional) Abrir Prisma Studio
@@ -80,7 +80,7 @@ bunx prisma db push
 Para ver y modificar los datos de forma visual:
 
 ```bash
-bunx prisma studio
+bun run db:studio
 ```
 
 ### 7. Iniciar el servidor
