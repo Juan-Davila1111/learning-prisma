@@ -1,0 +1,21 @@
+{
+  "name": "project-01",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun src/server.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.0",
+    "@prisma/client": "7.9.0",
+    "pg": "^8.22.0",
+    "prisma": "7.9.0"
+  }
+}
