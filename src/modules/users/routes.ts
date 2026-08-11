@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { prisma } from "../../db/prisma";
 import { CreateUserSchema, UpdateUserSchema } from "./schemas";
 import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/internal/prismaNamespace";
+import { formatDate } from "../../helpers/Date";
 
 export const userRoutes = new Elysia({
   prefix: "/users",
@@ -16,8 +17,8 @@ userRoutes.get("/", async () => {
 
   const usersWithDataFormatted = users.map((user) => ({
     ...user,
-    createdAt: user.createdAt.toISOString().replace("Z", "").replace("T", " "),
-    updatedAt: user.updatedAt.toISOString().replace("Z", "").replace("T", " ")
+    createdAt: formatDate(user.createdAt),
+    updatedAt: formatDate(user.updatedAt)
   }));
 
   return new Response(JSON.stringify({ ok: true, data: usersWithDataFormatted }), {
