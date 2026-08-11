@@ -5,17 +5,17 @@
     "": {
       "name": "project-01",
       "dependencies": {
-        "@prisma/adapter-pg": "^7.9.0",
+        "@prisma/adapter-pg": "7.9.0",
         "@prisma/client": "7.9.0",
-        "elysia": "^1.4.29",
-        "pg": "^8.22.0",
+        "elysia": "1.4.29",
+        "pg": "8.22.0",
         "prisma": "7.9.0",
       },
       "devDependencies": {
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "typescript": "^5",
+        "typescript": "5",
       },
     },
   },

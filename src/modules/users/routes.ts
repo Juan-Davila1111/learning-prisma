@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { prisma } from "../../db/prisma";
 import { CreateUserSchema, UpdateUserSchema } from "./schemas";
+import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/internal/prismaNamespace";
 
 export const userRoutes = new Elysia({
   prefix: "/users",
@@ -13,7 +14,13 @@ userRoutes.get("/", async () => {
     },
   });
 
-  return new Response(JSON.stringify({ ok: true, data: users }), {
+  const usersWithDataFormatted = users.map((user) => ({
+    ...user,
+    createdAt: user.createdAt.toISOString().replace("Z", "").replace("T", " "),
+    updatedAt: user.updatedAt.toISOString().replace("Z", "").replace("T", " ")
+  }));
+
+  return new Response(JSON.stringify({ ok: true, data: usersWithDataFormatted }), {
     status: 200,
   });
 });
@@ -70,20 +77,29 @@ userRoutes.post(
   "/",
   async ({ body }) => {
     const hashedPassword = await Bun.password.hash(body.password);
-    const user = await prisma.user.create({
-      data: {
-        email: body.email,
-        name: body.name,
-        password: hashedPassword,
-      },
-      omit: {
-        password: true
-      }
-    });
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email: body.email,
+          name: body.name,
+          password: hashedPassword,
+        },
+        omit: {
+          password: true,
+        },
+      });
 
-    return new Response(JSON.stringify({ ok: true, data: user }), {
-      status: 201,
-    });
+      return new Response(JSON.stringify({ ok: true, data: user }), {
+        status: 201,
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError && e.code === "P2002") {
+        return new Response(
+          JSON.stringify({ ok: false, message: "User existente." }),
+          { status: 409 },
+        );
+      }
+    }
   },
   {
     body: CreateUserSchema,
@@ -165,7 +181,7 @@ userRoutes.delete("/:id", async ({ params, set }) => {
     set.status = 204;
     return {
       ok: true,
-      message: "Usuario eliminado exitosamente"
+      message: "Usuario eliminado exitosamente",
     };
   } catch (e) {
     console.log("[Error] ", e);
